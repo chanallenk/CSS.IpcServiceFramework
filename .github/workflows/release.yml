@@ -22,8 +22,8 @@ env:
   CONFIGURATION: Release
   # Adjust if you want a different SDK (netstandard2.0 projects build fine on 8.x SDK)
   DOTNET_VERSION: '8.0.x'
-  # Comma-separated list of project files to pack (exclude test projects and sample apps)
-  PACK_PROJECTS: >-
+  # List of project files to pack (exclude test projects and sample apps)
+  PACK_PROJECTS: |-
     src/CSS.IpcServiceFramework.Core/CSS.IpcServiceFramework.Core.csproj
     src/CSS.IpcServiceFramework.Client/CSS.IpcServiceFramework.Client.csproj
     src/CSS.IpcServiceFramework.Client.NamedPipe/CSS.IpcServiceFramework.Client.NamedPipe.csproj
