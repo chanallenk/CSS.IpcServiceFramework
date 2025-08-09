@@ -51,7 +51,9 @@ jobs:
         shell: bash
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/v}"
+            # Strip 'refs/tags/v' prefix and any leading 'v' from the tag
+            RAW_VERSION="${GITHUB_REF#refs/tags/v}"
+            VERSION="${RAW_VERSION#v}"
           elif [[ -n "${{ github.event.inputs.version }}" ]]; then
             VERSION="${{ github.event.inputs.version }}"
           else
