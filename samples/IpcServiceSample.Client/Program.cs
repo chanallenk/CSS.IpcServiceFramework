@@ -1,5 +1,5 @@
-﻿using IpcServiceSample.ServiceContracts;
-using JKang.IpcServiceFramework.Client;
+using IpcServiceSample.ServiceContracts;
+using CSS.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
