@@ -208,17 +208,75 @@ namespace JKang.IpcServiceFramework.Client
 
         private async Task<IpcResponse> GetResponseAsync(IpcRequest request, CancellationToken cancellationToken)
         {
-            using (IpcStreamWrapper client = await ConnectToServerAsync(cancellationToken).ConfigureAwait(false))
-            using (Stream client2 = _options.StreamTranslator == null ? client.Stream : _options.StreamTranslator(client.Stream))
-            using (var writer = new IpcWriter(client2, _options.Serializer, leaveOpen: true))
-            using (var reader = new IpcReader(client2, _options.Serializer, leaveOpen: true))
+            const int maxCommunicationRetries = 2; // Limited retries for communication issues
+            Exception lastException = null;
+            
+            for (int attempt = 0; attempt < maxCommunicationRetries; attempt++)
             {
-                // send request
-                await writer.WriteAsync(request, cancellationToken).ConfigureAwait(false);
+                IpcStreamWrapper client = null;
+                Stream client2 = null;
+                IpcWriter writer = null;
+                IpcReader reader = null;
+                
+                try
+                {
+                    client = await ConnectToServerAsync(cancellationToken).ConfigureAwait(false);
+                    client2 = _options.StreamTranslator == null ? client.Stream : _options.StreamTranslator(client.Stream);
+                    writer = new IpcWriter(client2, _options.Serializer, leaveOpen: true);
+                    reader = new IpcReader(client2, _options.Serializer, leaveOpen: true);
 
-                // receive response
-                return await reader.ReadIpcResponseAsync(cancellationToken).ConfigureAwait(false);
+                    // send request
+                    await writer.WriteAsync(request, cancellationToken).ConfigureAwait(false);
+
+                    // receive response
+                    return await reader.ReadIpcResponseAsync(cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    // Don't retry if explicitly cancelled
+                    throw;
+                }
+                catch (Exception ex) when (attempt < maxCommunicationRetries - 1 && IsCommunicationRetriableException(ex))
+                {
+                    lastException = ex;
+                    
+                    // Small delay before retry for communication errors
+                    try
+                    {
+                        await Task.Delay(100, cancellationToken).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        throw; // Don't retry if cancelled during delay
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                    throw;
+                }
+                finally
+                {
+                    // Ensure proper cleanup
+                    reader?.Dispose();
+                    writer?.Dispose();
+                    if (client2 != client?.Stream)
+                    {
+                        client2?.Dispose();
+                    }
+                    client?.Dispose();
+                }
             }
+            
+            // Should not reach here, but just in case
+            throw lastException ?? new IpcCommunicationException("Failed to communicate with IPC server after retries.");
+        }
+
+        private static bool IsCommunicationRetriableException(Exception ex)
+        {
+            return ex is IOException ||
+                   ex is IpcSerializationException ||
+                   (ex is IpcCommunicationException commEx && !commEx.Message.ToLowerInvariant().Contains("server"));
         }
 
 #if !DISABLE_DYNAMIC_CODE_GENERATION
