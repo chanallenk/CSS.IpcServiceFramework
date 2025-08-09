@@ -1,6 +1,6 @@
-﻿using IpcServiceSample.Server;
+using IpcServiceSample.Server;
 using IpcServiceSample.ServiceContracts;
-using JKang.IpcServiceFramework.Hosting;
+using CSS.IpcServiceFramework.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

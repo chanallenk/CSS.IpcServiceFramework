@@ -1,6 +1,3 @@
-| CI build | Stable build |
-|----------|--------------|
-|[![Build Status](https://dev.azure.com/jacques-kang/IpcServiceFramework/_apis/build/status/IpcServiceFramework%20CI?branchName=develop)](https://dev.azure.com/jacques-kang/IpcServiceFramework/_build/latest?definitionId=9&branchName=develop)|[![Build Status](https://dev.azure.com/jacques-kang/IpcServiceFramework/_apis/build/status/IpcServiceFramework?branchName=master)](https://dev.azure.com/jacques-kang/IpcServiceFramework/_build/latest?definitionId=14&branchName=master)|
 
 # IpcServiceFramework
 
@@ -10,10 +7,10 @@ Named pipeline and TCP support out-of-the-box, extensible with other protocols.
 ## NuGet packages
 | Name | Purpose | Status |
 | ---- | ------- | ------ |
-| JKang.IpcServiceFramework.Client.NamedPipe | Client SDK to consume IPC service over Named pipe | [![NuGet version](https://badge.fury.io/nu/JKang.IpcServiceFramework.Client.NamedPipe.svg)](https://badge.fury.io/nu/JKang.IpcServiceFramework.Client.NamedPipe) |
-| JKang.IpcServiceFramework.Client.Tcp | Client SDK to consume IPC service over TCP | [![NuGet version](https://badge.fury.io/nu/JKang.IpcServiceFramework.Client.Tcp.svg)](https://badge.fury.io/nu/JKang.IpcServiceFramework.Client.Tcp) |
-| JKang.IpcServiceFramework.Hosting.NamedPipe | Server SDK to run Named pipe IPC service endpoint | [![NuGet version](https://badge.fury.io/nu/JKang.IpcServiceFramework.Hosting.NamedPipe.svg)](https://badge.fury.io/nu/JKang.IpcServiceFramework.Hosting.NamedPipe) |
-| JKang.IpcServiceFramework.Hosting.Tcp | Server SDK to run TCP IPC service endpoint | [![NuGet version](https://badge.fury.io/nu/JKang.IpcServiceFramework.Hosting.Tcp.svg)](https://badge.fury.io/nu/JKang.IpcServiceFramework.Hosting.Tcp) |
+| CSS.IpcServiceFramework.Client.NamedPipe | Client SDK to consume IPC service over Named pipe | [![NuGet version](https://badge.fury.io/nu/CSS.IpcServiceFramework.Client.NamedPipe.svg)](https://badge.fury.io/nu/CSS.IpcServiceFramework.Client.NamedPipe) |
+| CSS.IpcServiceFramework.Client.Tcp | Client SDK to consume IPC service over TCP | [![NuGet version](https://badge.fury.io/nu/CSS.IpcServiceFramework.Client.Tcp.svg)](https://badge.fury.io/nu/CSS.IpcServiceFramework.Client.Tcp) |
+| CSS.IpcServiceFramework.Hosting.NamedPipe | Server SDK to run Named pipe IPC service endpoint | [![NuGet version](https://badge.fury.io/nu/CSS.IpcServiceFramework.Hosting.NamedPipe.svg)](https://badge.fury.io/nu/CSS.IpcServiceFramework.Hosting.NamedPipe) |
+| CSS.IpcServiceFramework.Hosting.Tcp | Server SDK to run TCP IPC service endpoint | [![NuGet version](https://badge.fury.io/nu/CSS.IpcServiceFramework.Hosting.Tcp.svg)](https://badge.fury.io/nu/CSS.IpcServiceFramework.Hosting.Tcp) |
 
 
 ## Usage
@@ -45,7 +42,7 @@ Named pipeline and TCP support out-of-the-box, extensible with other protocols.
 
     ```powershell
     > Install-Package Microsoft.Extensions.Hosting
-    > Install-Package JKang.IpcServiceFramework.Hosting.NamedPipe
+    > Install-Package CSS.IpcServiceFramework.Hosting.NamedPipe
     ```
 
  1. Register the service implementation and configure IPC endpoint(s):
@@ -80,7 +77,7 @@ Named pipeline and TCP support out-of-the-box, extensible with other protocols.
  1. Install the following NuGet package in client application:
 
     ```powershell
-    > Install-Package JKang.IpcServiceFramework.Client.NamedPipe
+    > Install-Package CSS.IpcServiceFramework.Client.NamedPipe
     ```
 
  1. Invoke the server

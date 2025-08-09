@@ -16,7 +16,7 @@ Follow [Conventional Commits 1.0](https://www.conventionalcommits.org/en/v1.0.0/
 
 Follow [Semantic Versioning 2.0](https://semver.org/).
 
-Currently all JKang.IpcServiceFramework.* packages share a same version fixed in [version.yml](/build/version.yml). You should thus update this file when starting working on a new milestone.
+Currently all CSS.IpcServiceFramework.* packages share a same version fixed in [version.yml](/build/version.yml). You should thus update this file when starting working on a new milestone.
 
 ## CI/CD
 
