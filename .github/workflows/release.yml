@@ -1,0 +1,122 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'           # e.g. v1.2.3
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 1.2.3). If empty and a tag trigger, tag version is used.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CONFIGURATION: Release
+  # Adjust if you want a different SDK (netstandard2.0 projects build fine on 8.x SDK)
+  DOTNET_VERSION: '8.0.x'
+  # Comma-separated list of project files to pack (exclude test projects and sample apps)
+  PACK_PROJECTS: >-
+    src/CSS.IpcServiceFramework.Core/CSS.IpcServiceFramework.Core.csproj
+    src/CSS.IpcServiceFramework.Client/CSS.IpcServiceFramework.Client.csproj
+    src/CSS.IpcServiceFramework.Client.NamedPipe/CSS.IpcServiceFramework.Client.NamedPipe.csproj
+    src/CSS.IpcServiceFramework.Client.Tcp/CSS.IpcServiceFramework.Client.Tcp.csproj
+    src/CSS.IpcServiceFramework.Hosting/CSS.IpcServiceFramework.Hosting.csproj
+    src/CSS.IpcServiceFramework.Hosting.NamedPipe/CSS.IpcServiceFramework.Hosting.NamedPipe.csproj
+    src/CSS.IpcServiceFramework.Hosting.Tcp/CSS.IpcServiceFramework.Hosting.Tcp.csproj
+
+jobs:
+  build-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          elif [[ -n "${{ github.event.inputs.version }}" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            # fallback: date + short sha (not published to NuGet unless tagged)
+            VERSION="0.0.0-dev.$(date -u +%Y%m%d%H%M%S).${GITHUB_SHA::7}"
+          fi
+          echo "Package version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore src/IpcServiceFramework.sln
+
+      - name: Build
+        run: dotnet build src/IpcServiceFramework.sln -c ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Test
+        run: dotnet test src/IpcServiceFramework.sln -c ${{ env.CONFIGURATION }} --no-build --logger trx --results-directory TestResults
+
+      - name: Pack
+        shell: bash
+        run: |
+          VERSION='${{ steps.version.outputs.version }}'
+          mkdir -p artifacts
+          # Iterate over project list
+          while read -r proj; do
+            [[ -z "$proj" ]] && continue
+            echo "Packing $proj"
+            dotnet pack "$proj" -c ${{ env.CONFIGURATION }} \
+              -p:PackageVersion=$VERSION \
+              -p:ContinuousIntegrationBuild=true \
+              -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg \
+              --no-build -o artifacts
+          done <<< "${{ env.PACK_PROJECTS }}"
+          ls -1 artifacts
+
+      - name: Upload artifacts (5 day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages-${{ steps.version.outputs.version }}
+          path: artifacts/*.nupkg
+          if-no-files-found: error
+          retention-days: 5
+
+      - name: Upload symbol artifacts (5 day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-symbols-${{ steps.version.outputs.version }}
+          path: artifacts/*.snupkg
+          if-no-files-found: warn
+          retention-days: 5
+
+      - name: Publish to NuGet
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "NUGET_API_KEY secret is missing. Skipping publish." && exit 0
+          fi
+          dotnet nuget push artifacts/*.nupkg \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Summary
+        run: |
+          echo "Version: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "Published to NuGet: ${{ startsWith(github.ref, 'refs/tags/v') && 'Yes' || 'No (not a tag)' }}" >> $GITHUB_STEP_SUMMARY
