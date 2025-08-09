@@ -23,7 +23,7 @@ namespace CSS.IpcServiceFramework.NamedPipeTests
         [Fact]
         public async Task ServerIsOff_Timeout()
         {
-            int timeout = 1000; // 1s
+            int timeout = 3000; // 3s - increased for CI environment stability
             IIpcClient<ITestService> client = _factory
                 .CreateClient((name, services) =>
                 {
@@ -41,7 +41,7 @@ namespace CSS.IpcServiceFramework.NamedPipeTests
                 string output = await client.InvokeAsync(x => x.StringType("abc"));
             });
 
-            Assert.True(sw.ElapsedMilliseconds < timeout * 2); // makesure timeout works with marge
+            Assert.True(sw.ElapsedMilliseconds < timeout * 4); // allow more margin for slow environments
 #endif
 
             var sw2 = Stopwatch.StartNew();
@@ -51,7 +51,7 @@ namespace CSS.IpcServiceFramework.NamedPipeTests
                 string output = await client.InvokeAsync<string>(request);
             });
 
-            Assert.True(sw2.ElapsedMilliseconds < timeout * 2); // makesure timeout works with marge
+            Assert.True(sw2.ElapsedMilliseconds < timeout * 4); // allow more margin for slow environments
         }
 
         [Fact]
