@@ -81,8 +81,6 @@ jobs:
             echo "Packing $proj"
             dotnet pack "$proj" -c ${{ env.CONFIGURATION }} \
               -p:PackageVersion=$VERSION \
-              -p:ContinuousIntegrationBuild=true \
-              -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg \
               --no-build -o artifacts
           done <<< "${{ env.PACK_PROJECTS }}"
           ls -1 artifacts

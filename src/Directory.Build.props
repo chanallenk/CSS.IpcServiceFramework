@@ -1,14 +1,18 @@
 <Project>
 
   <PropertyGroup>
-    <Authors>Jacques Kang and other GitHub contributors</Authors>
+    <Authors>Jacques Kang, chanallenk, and other GitHub contributors</Authors>
     <Company />
-    <PackageLicenseUrl>https://github.com/jacqueskang/IpcServiceFramework/blob/develop/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/jacqueskang/IpcServiceFramework</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/jacqueskang/IpcServiceFramework</PackageProjectUrl>
-    <Version>3.0.0</Version>
+    <!-- Use SPDX license expression instead of deprecated PackageLicenseUrl -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/chanallenk/IpcServiceFramework</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/chanallenk/IpcServiceFramework</PackageProjectUrl>
+    <Version>3.1.0</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\IpcServiceFramework.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DisableDynamicCodeGeneration)' == 'true'">
