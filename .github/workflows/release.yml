@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (e.g. 1.2.3). If empty and a tag trigger, tag version is used.'
+        description: 'Version (e.g. v1.2.3). If empty and a tag trigger, tag version is used.'
         required: false
         type: string
 
