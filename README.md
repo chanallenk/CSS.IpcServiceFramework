@@ -98,6 +98,3 @@ Named pipeline and TCP support out-of-the-box, extensible with other protocols.
     string output = await client.InvokeAsync(x => x.ReverseString(input));
     ```
 
-## FAQs
-
-
