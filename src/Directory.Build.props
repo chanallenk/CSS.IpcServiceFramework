@@ -5,11 +5,11 @@
     <Company />
     <!-- Use SPDX license expression instead of deprecated PackageLicenseUrl -->
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/chanallenk/IpcServiceFramework</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/chanallenk/IpcServiceFramework</PackageProjectUrl>
-    <Version>3.1.0</Version>
+    <RepositoryUrl>https://github.com/chanallenk/CSS.IpcServiceFramework</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/chanallenk/CSS.IpcServiceFramework</PackageProjectUrl>
+    <Version>8.0.0</Version>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\IpcServiceFramework.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\CSS.IpcServiceFramework.snk</AssemblyOriginatorKeyFile>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

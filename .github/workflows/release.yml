@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (e.g. 1.2.3). If empty and a tag trigger, tag version is used.'
+        description: 'Version (e.g. v1.2.3). If empty and a tag trigger, tag version is used.'
         required: false
         type: string
 
@@ -51,11 +51,12 @@ jobs:
         shell: bash
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            # Strip 'refs/tags/v' prefix and any leading 'v' from the tag
-            RAW_VERSION="${GITHUB_REF#refs/tags/v}"
-            VERSION="${RAW_VERSION#v}"
+            # Strip 'refs/tags/v' prefix to get the version
+            VERSION="${GITHUB_REF#refs/tags/v}"
           elif [[ -n "${{ github.event.inputs.version }}" ]]; then
-            VERSION="${{ github.event.inputs.version }}"
+            # Strip any leading 'v' from manual input
+            RAW_VERSION="${{ github.event.inputs.version }}"
+            VERSION="${RAW_VERSION#v}"
           else
             # fallback: date + short sha (not published to NuGet unless tagged)
             VERSION="0.0.0-dev.$(date -u +%Y%m%d%H%M%S).${GITHUB_SHA::7}"
